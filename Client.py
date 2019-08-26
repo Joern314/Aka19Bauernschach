@@ -4,13 +4,14 @@ from Evaluator import Evaluator
 from GameState import GameState
 from Move import Move
 
+
 class Client:
     def __init__(self, width, height, name="JJF"):
         self.color = ""
         self.innerstate = GameState(width, height)
         self.evaluator = Evaluator()
         self.name = name
-    
+
     def find_best_move(self):
         rating, move = self.evaluator.evaluate(self.innerstate, -math.inf, math.inf)
         return move
@@ -18,7 +19,7 @@ class Client:
     def connect(self):
         print(self.name)
 
-    def start_game():
+    def start_game(self):
         self.color = input()
         print("ok")
 
@@ -43,18 +44,17 @@ class Client:
 
     @staticmethod
     def invert_turn(turn):
-        return "black" if turn is "white" else "white"            
-        
+        return "black" if turn == "white" else "white"
+
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3: #python3 Client.py width height
-        width =  int(sys.argv[1])
+    if len(sys.argv) == 3:  # python3 Client.py width height
+        width = int(sys.argv[1])
         height = int(sys.argv[2])
     else:
         width = 2
         height = 4
-        
+
     # main function
     client = Client(width, height)
     client.run()
-    

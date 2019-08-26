@@ -7,11 +7,11 @@ class Evaluator:
         # liefert Bewertung + besten Zug
         # bricht ab wenn bewertung <= alpha oder >=beta
 
-        legalMoves = knoten.listAllLegalMoves() #liste aller kanten zu kindern
-        m = -alpha #schlechteste Stellung für den Gegner hat Wert m
+        legalMoves = knoten.list_all_legal_moves() # liste aller kanten zu kindern
+        m = -alpha # schlechteste Stellung für den Gegner hat Wert m
         bestmove = None
         for move in legalMoves:
-            child = knoten.copy()
+            child = knoten.clone()
             child.applyMove(move)
             e, _ = self.evaluate(child, -beta, m)  # <= m, >=-beta
             if m < e: # neue schlechteste Stellung für Gegner
