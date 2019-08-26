@@ -4,20 +4,17 @@ class Evaluator(Object):
         pass
     
     def evaluate(self, knoten, alpha, beta):
-        # liefert Bewertung, optimalen Move
+        # liefert Bewertung
         # bricht ab wenn bewertung <= alpha oder >=beta
 
         legalMoves = knoten.listLegalMoves() #liste aller kanten zu kindern
-        m = -alpha #
-        bestmove = None
+        m = -alpha  #unsere beste Wahl. Schlechter als alpha ist uninteressant
         for move in legalMoves:
             child = knoten.copy()
             child.applyMove(move)
-            e,_ = self.evaluate(child, -beta, m)
-            if e < m:
-                m = e
-                bestmove = move
+            e = self.evaluate(child, -beta, m)  #bessere züge als m sind nicht interessant weil Gegner zieht
+            m = min(m,e)
             if m <= -beta:
                 break
-        return -m, bestmove
+        return -m
     
