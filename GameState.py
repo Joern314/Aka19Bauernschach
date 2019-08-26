@@ -20,7 +20,7 @@ class GameState:
     def getSize(self):
         return self.size
 
-    def listAllLegitMoves(self):
+    def list_all_legal_moves(self):
         retVal = []
         for bauer in self.posWhite:
             # gerade ziehen
@@ -55,7 +55,8 @@ class GameState:
         pass
 
     def clone(self):
-        g = GameState(self.size_x, self.size_y)
+        x, y = self.size
+        g = GameState(x, y)
         g.weissAmZug = self.weissAmZug
         g.posWhite = self.posWhite
         g.posBlack = self.posBlack
