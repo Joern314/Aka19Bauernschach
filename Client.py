@@ -1,21 +1,49 @@
 import math
 import sys
-import Evaluator
-import GameState
-import Move
+from Evaluator import Evaluator
+from GameState import GameState
+from Move import Move
 
 class Client:
-    def __init__(self, width, height):
+    def __init__(self, width, height, name="JJF"):
         self.color = ""
         self.innerstate = GameState(width, height)
         self.evaluator = Evaluator()
-        pass
+        self.name = name
     
-    def findBestMove(self):
+    def find_best_move(self):
         rating, move = self.evaluator.evaluate(self.innerstate, -math.inf, math.inf)
         return move
-    
+
+    def connect(self):
+        print(self.name)
+
+    def start_game():
+        self.color = input()
+        print("ok")
+
     def run(self):
+        self.connect()
+        while True:
+            turn = "white"
+            self.start_game()
+            while True:
+                if turn == self.color:
+                    move = self.find_best_move()
+                    print(Move.write_move(move))
+                else:
+                    movestring = input()
+                    if movestring == "done":
+                        break
+                    else:
+                        move = Move.parse_move(movestring)
+
+                self.innerstate.apply(move)
+                turn = self.invert_turn(turn)
+
+    @staticmethod
+    def invert_turn(turn):
+        return "black" if turn is "white" else "white"            
         
 
 if __name__ == "__main__":
