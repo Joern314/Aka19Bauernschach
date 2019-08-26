@@ -11,7 +11,7 @@ class Evaluator:
         m = -alpha #schlechteste Stellung für den Gegner hat Wert m
         bestmove = None
         for move in legalMoves:
-            child = knoten.copy()
+            child = knoten.clone()
             child.applyMove(move)
             e, _ = self.evaluate(child, -beta, m)  # <= m, >=-beta
             if m < e: # neue schlechteste Stellung für Gegner

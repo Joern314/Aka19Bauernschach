@@ -8,9 +8,9 @@ class GameState:
         self.weissAmZug = True
         self.posWhite = []
         self.posBlack = []
-        self.populateBauern()
+        self.populate_bauern()
 
-    def populateBauern(self):  # Argument positions?
+    def populate_bauern(self):  # Argument positions?
 
         for i in range(self.size[0]):
             # zwei Reihen Bauern
@@ -54,9 +54,12 @@ class GameState:
         # branch for straight (0) and hit (-1, +1)
         pass
 
-    # TODO
-    def copy(self):
-        pass
+    def clone(self):
+        g = GameState(self.size_x, self.size_y)
+        g.weissAmZug = self.weissAmZug
+        g.posWhite = self.posWhite
+        g.posBlack = self.posBlack
+
 
     # TODO
     def checkIfLegal(self, move: Move):
