@@ -1,9 +1,7 @@
+class Client:
+    pass
 
-class Client(Object):
-    
-    
-    
-    
+
 if __name__ == "__main__":
-    #main function
-    
+    # main function
+    pass

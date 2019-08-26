@@ -1,5 +1,2 @@
-
-
-class GameState(Object):
-
-
+class GameState:
+    pass

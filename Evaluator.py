@@ -1,5 +1,4 @@
-
-class Evaluator(Object):
+class Evaluator:
     def __init__(self):
         pass
     
