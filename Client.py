@@ -13,8 +13,9 @@ class Client:
     def parseMove(self, string):
         pass
     
-    def writeMove(self, string):
-        pass
+    def writeMove(self, move):
+        x,y = move.figur
+        
     
     def findBestMove(self):
         rating, move = self.evaluator.evaluate(self.innerstate, -math.inf, math.inf)
