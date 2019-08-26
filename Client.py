@@ -6,7 +6,7 @@ import Move
 
 class Client:
     def __init__(self, width, height):
-        self.black_or_white = None
+        self.color = ""
         self.innerstate = GameState(width, height)
         self.evaluator = Evaluator()
         pass
