@@ -9,13 +9,6 @@ class Client:
         self.innerstate = GameState()
         self.evaluator = Evaluator()
         pass
-
-    def parseMove(self, string):
-        pass
-    
-    def writeMove(self, move):
-        x,y = move.figur
-        
     
     def findBestMove(self):
         rating, move = self.evaluator.evaluate(self.innerstate, -math.inf, math.inf)
