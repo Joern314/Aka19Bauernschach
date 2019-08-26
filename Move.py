@@ -14,7 +14,7 @@ class Move:
         return self.figur
 
 	@staticmethod	
-    def parseMove(movecode)
+    def parse_move(movecode)
     	if movecode is "pass":
             return Move(None, None, passsing = True)
         else:
@@ -22,7 +22,7 @@ class Move:
             return Move((x, y), r)
 
     @staticmethod
-    def writeMove(move):
+    def write_move(move):
         if move.passing:
             return "pass"
         else:
