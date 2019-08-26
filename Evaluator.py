@@ -1,7 +1,7 @@
 class Evaluator:
     def __init__(self):
         pass
-    
+
     def evaluate(self, knoten, alpha, beta):
         # Annahme: beta > alpha
         # liefert Bewertung + besten Zug
@@ -12,9 +12,10 @@ class Evaluator:
         bestmove = None
         for move in legalMoves:
             child = knoten.clone()
+            # TODO get result and break if already winning
             child.applyMove(move)
             e, _ = self.evaluate(child, -beta, m)  # <= m, >=-beta
-            if m < e: # neue schlechteste Stellung für Gegner
+            if m > e: # neue schlechteste Stellung für Gegner
                 bestmove = move
                 m = e
                 
