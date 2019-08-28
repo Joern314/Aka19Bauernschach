@@ -68,17 +68,17 @@ class GameState:
         # delete the bauer from the pos* array
         # and add it again with the new position
 
-        posWhate.remove(move.get_figur())
+        posWhite.remove(move.get_figur())
 
         # branch for straight (0) or hit (-1, +1)
         if move.get_richtung() == 0:
-            posWhate.append((move.get_figur()[0], move.get_figur()[1]+1))
+            posWhite.append((move.get_figur()[0], move.get_figur()[1]+1))
 
         elif move.get_richtung() == +1:
-            posWhate.append((move.get_figur()[0]+1, move.get_figur()[1]+1))
+            posWhite.append((move.get_figur()[0]+1, move.get_figur()[1]+1))
 
         elif move.get_richtung() == -1:
-            posWhate.append((move.get_figur()[0]-1, move.get_figur()[1]+1))
+            posWhite.append((move.get_figur()[0]-1, move.get_figur()[1]+1))
 
 
     # TODO
