@@ -21,8 +21,8 @@ class GameState:
 
     def list_all_legal_moves(self):
         retVal = []
-        for bauer in self.posWhite:
-            for richtung in [-1,0,+1]:
+        for richtung in [-1,+1,0]:
+            for bauer in self.posWhite:
                 move = Move(bauer, richtung)
                 if self.checkIfLegal(move):
                     retVal.append(move)
