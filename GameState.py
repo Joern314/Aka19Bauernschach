@@ -82,13 +82,15 @@ class GameState:
 
 
     def checkIfLegal(self, move: Move):        
-        x, y = move.figur
         if move.is_passing():
             return True # assumes pass is only considered if no other moves were allowed
-        elif not (x,y) in self.posWhite:
+
+        x, y = move.figur
+        if not (x,y) in self.posWhite:
             return False #not a white pawn
+        
         # gerade ziehen
-        elif move.richtung == 0:
+        if move.richtung == 0:
             return (x,y+1) not in (self.posWhite + self.posBlack) #if y+1 was oob then the game would already have ended
         # "+1" schlagen (nach rechts schlagen)
         elif move.richtung == +1:
