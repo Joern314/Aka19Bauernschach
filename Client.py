@@ -14,6 +14,8 @@ class Client:
         self.evaluator = Evaluator()
         self.name = name
 
+        self.innerstate.populate_bauern()
+
 
     def find_best_move(self):
         rating, move = self.evaluator.evaluate(self.innerstate, -100, 100)
@@ -65,8 +67,7 @@ class Client:
     def invert_turn(turn):
         return "black" if turn == "white" else "white"
 
-
-if __name__ == "__main__":
+def main():
     if len(sys.argv) >= 3:  # python3 Client.py width height
         width = int(sys.argv[1])
         height = int(sys.argv[2])
@@ -78,5 +79,18 @@ if __name__ == "__main__":
     if len(sys.argv) >= 4:
         name = sys.argv[3]
     # main function
-    client = Client(width, height, name)
+    client = Client(width, height, name=name)
     client.run()
+
+def test():
+    c = Client(4,4)
+    turn = False
+    while not c.innerstate.game_is_finished():
+        move = c.find_best_move()
+        print(Move.write_move(move, turn, c.innerstate))
+        c.innerstate.applyMove(move)
+        c.innerstate.rotateBoard()
+        turn = not turn
+
+if __name__ == "__main__":
+    test()
