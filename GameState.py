@@ -101,3 +101,20 @@ class GameState:
             return (x-1,y+1) in self.posBlack
         else:
             return False # illegal direction?
+
+
+    def game_is_finished(self):
+        # one figure has traversed the board to the opponent’s side
+        for figure in self.posWhite:
+            if figure[1] == self.size[1]:
+                return True
+
+        for figure in self.posBlack:
+            if figure[1] == 0:
+                return True
+
+        # no legal moves
+        if self.list_all_legal_moves() == [Move((0,0),0, True)]:
+            return True
+
+        return False

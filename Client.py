@@ -39,7 +39,7 @@ class Client:
                     else:
                         move = Move.parse_move(movestring)
 
-                self.innerstate.apply(move)
+                self.innerstate.applyMove(move)
                 turn = self.invert_turn(turn)
 
     @staticmethod
