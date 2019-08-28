@@ -29,7 +29,7 @@ class GameState:
                     retVal.append(move)
                     
         if len(retVal) == 0:
-            move = Move((0,0),0, True) #Pass
+            move = Move((0,0),0, True) # Pass
             retVal.append(move)
 
         return retVal
@@ -70,19 +70,19 @@ class GameState:
     def checkIfLegal(self, move: Move):
         x, y = move.figur
         if move.is_passing():
-            return True #assumes pass is only considered if no other moves were allowed
+            return True # assumes pass is only considered if no other moves were allowed
         # gerade ziehen
         elif move.richtung == 0:
             return (x,y+1) not in [self.posWhite + self.posBlack] #if y+1 was oob then the game would already have ended
         # "+1" schlagen (nach rechts schlagen)
         elif move.richtung == +1:
-            if x+1 >= self.size[0]: #oob, again y+1 can be assumed in bounds
+            if x+1 >= self.size[0]: # oob, again y+1 can be assumed in bounds
                 return False 
             
-            if (x+1,y+1) in self.posWhite: #can't take white
+            if (x+1,y+1) in self.posWhite: # can't take white
                 return False
             
-            return (x+1,y+1) in self.posBlack #need take black
+            return (x+1,y+1) in self.posBlack # need take black
         # "-1" schlagen (nach links schlagen)
         elif move.richtung == -1:
             if x-1 < 0: #oob
@@ -93,4 +93,4 @@ class GameState:
             
             return (x-1,y+1) in self.posBlack
         else:
-            return False #illegal direction?
+            return False # illegal direction?
