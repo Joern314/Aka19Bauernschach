@@ -83,7 +83,7 @@ def main():
     client.run()
 
 def test():
-    c = Client(4,4)
+    c = Client(5,5)
     turn = False
     while not c.innerstate.game_is_finished():
         move = c.find_best_move()
@@ -91,6 +91,10 @@ def test():
         c.innerstate.applyMove(move)
         c.innerstate.rotateBoard()
         turn = not turn
+    print("result for white = " + str(c.innerstate.game_is_finished() * (-1 if turn else 1)))
 
 if __name__ == "__main__":
-    test()
+    if len(sys.argv) == 1:
+        test()
+    else:
+        main()
