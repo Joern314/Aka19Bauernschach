@@ -53,17 +53,17 @@ class GameState:
         # delete the bauer from the pos* array
         # and add it again with the new position
 
-        posWhite.remove(move.get_figur())
+        self.posWhite.remove(move.get_figur())
 
         # branch for straight (0) or hit (-1, +1)
         if move.get_richtung() == 0:
-            posWhite.append((move.get_figur()[0], move.get_figur()[1]+1))
+            self.posWhite.append((move.get_figur()[0], move.get_figur()[1]+1))
 
         elif move.get_richtung() == +1:
-            posWhite.append((move.get_figur()[0]+1, move.get_figur()[1]+1))
+            self.posWhite.append((move.get_figur()[0]+1, move.get_figur()[1]+1))
 
         elif move.get_richtung() == -1:
-            posWhite.append((move.get_figur()[0]-1, move.get_figur()[1]+1))
+            self.posWhite.append((move.get_figur()[0]-1, move.get_figur()[1]+1))
 
 
     # TODO
@@ -85,7 +85,6 @@ class GameState:
             return (x+1,y+1) in self.posBlack #need take black
         # "-1" schlagen (nach links schlagen)
         elif move.richtung == -1:
-        try:
             if x-1 < 0: #oob
                 return False
             
