@@ -1,4 +1,4 @@
-import Move
+from Move import *
 
 
 class GameState:
@@ -34,7 +34,6 @@ class GameState:
 
         return retVal
 
-    # TODO
     def rotateBoard(self):
         black = self.posBlack
         self.posBlack.clear()
@@ -52,6 +51,7 @@ class GameState:
         g.weissAmZug = self.weissAmZug
         g.posWhite = self.posWhite
         g.posBlack = self.posBlack
+        return g
 
     # TODO sanity checking?
     def applyMove(self, move : Move):
@@ -74,7 +74,6 @@ class GameState:
             self.posWhite.append((move.get_figur()[0]-1, move.get_figur()[1]+1))
 
 
-    # TODO
     def checkIfLegal(self, move: Move):
         x, y = move.figur
         if move.is_passing():
