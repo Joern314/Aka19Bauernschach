@@ -7,7 +7,8 @@ class GameState:
         self.size = (size_x, size_y)
         self.posWhite = []
         self.posBlack = []
-        self.blackpassed = False
+        self.lastpassed = False
+        self.thispassed = False
 
     def populate_bauern(self):  # Argument positions?
         for i in range(self.size[0]):
@@ -27,33 +28,39 @@ class GameState:
                     retVal.append(move)
                     
         if len(retVal) == 0:
-            move = Move((0,0),0, True) # Pass
+            move = Move(None,None, True) # Pass
             retVal.append(move)
 
         return retVal
 
     def rotateBoard(self):
-        black = self.posBlack
-        self.posBlack.clear()
+        black = []
+        white = []
         for figur in self.posWhite:
-            self.posBlack.append((figur[0],self.size[1] - 1 - figur[1]))
-        self.posWhite.clear()
-        for figur in black:
-            self.posWhite.append((figur[0], self.size[1] -1 - figur[1]))
-
+            black.append((figur[0],self.size[1] - 1 - figur[1]))
+        for figur in self.posBlack:
+            white.append((figur[0], self.size[1] -1 - figur[1]))
+        self.posWhite=white
+        self.posBlack=black
 
 
     def clone(self):
         x, y = self.size
         g = GameState(x, y)
-        g.posWhite = self.posWhite
-        g.posBlack = self.posBlack
-        g.blackpassed = self.blackpassed
+        g.posWhite = self.posWhite.copy()
+        g.posBlack = self.posBlack.copy()
+        g.lastpassed = self.lastpassed
+        g.thispassed = self.thispassed
         return g
 
     # TODO sanity checking?
     def applyMove(self, move : Move):
+        
+        self.lastpassed = self.thispassed
+        self.thispassed = False
+        
         if move.is_passing():
+            self.thispassed = True
             return
 
         # delete the bauer from the pos* array
@@ -67,18 +74,22 @@ class GameState:
 
         elif move.get_richtung() == +1:
             self.posWhite.append((move.get_figur()[0]+1, move.get_figur()[1]+1))
+            self.posBlack.remove((move.get_figur()[0]+1, move.get_figur()[1]+1))
 
         elif move.get_richtung() == -1:
             self.posWhite.append((move.get_figur()[0]-1, move.get_figur()[1]+1))
+            self.posBlack.remove((move.get_figur()[0]-1, move.get_figur()[1]+1))
 
 
-    def checkIfLegal(self, move: Move):
+    def checkIfLegal(self, move: Move):        
         x, y = move.figur
         if move.is_passing():
             return True # assumes pass is only considered if no other moves were allowed
+        elif not (x,y) in self.posWhite:
+            return False #not a white pawn
         # gerade ziehen
         elif move.richtung == 0:
-            return (x,y+1) not in [self.posWhite + self.posBlack] #if y+1 was oob then the game would already have ended
+            return (x,y+1) not in (self.posWhite + self.posBlack) #if y+1 was oob then the game would already have ended
         # "+1" schlagen (nach rechts schlagen)
         elif move.richtung == +1:
             if x+1 >= self.size[0]: # oob, again y+1 can be assumed in bounds
@@ -112,9 +123,6 @@ class GameState:
                 return -1
 
         # no legal moves
-        if self.list_all_legal_moves() == [Move((0,0),0, True)]:
-            if self.blackpassed:
-                return 0
-            else:
-                return None
+        if self.lastpassed and self.thispassed:
+            return 0
         return None

@@ -12,18 +12,21 @@ class Move:
 
     def get_figur(self):
         return self.figur
+    
+    def rotateBoard(self, board):
+        self.figur = (self.figur[0], board.size[1]-1 - self.figur[1])
 
     @staticmethod
-    def parse_move(movecode):
+    def parse_move(movecode, invert, gamestate):
         if movecode == "pass":
             return Move(None, None, passsing=True)
         else:
             x, y, r = movecode.split(",")
-            return Move((x, y), r)
+            return Move((int(x), int(y) if not invert else gamestate.size[1]-1-int(y)), int(r))
 
     @staticmethod
-    def write_move(move):
+    def write_move(move, invert, gamestate):
         if move.passing:
             return "pass"
         else:
-            return move.x + "," + move.y + "," + move.direction
+            return str(move.figur[0]) + "," + str(move.figur[1] if not invert else gamestate.size[1]-1-move.figur[1]) + "," + str(move.richtung)
