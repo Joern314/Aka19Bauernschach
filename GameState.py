@@ -35,8 +35,16 @@ class GameState:
         return retVal
 
     # TODO
-    def rotateBoard():
-        pass
+    def rotateBoard(self):
+        black = self.posBlack
+        self.posBlack.clear()
+        for figur in self.posWhite:
+            self.posBlack.append((figur[0],self.size[1] - 1 - figur[1]))
+        self.posWhite.clear()
+        for figur in black:
+            self.posWhite.append((figur[0], self.size[1] -1 - figur[1]))
+
+
 
     def clone(self):
         x, y = self.size
