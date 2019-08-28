@@ -11,6 +11,9 @@ class Client:
         self.innerstate = GameState(width, height)
         self.evaluator = Evaluator()
         self.name = name
+        
+        self.innerstate.populate_bauern()
+
 
     def find_best_move(self):
         rating, move = self.evaluator.evaluate(self.innerstate, -math.inf, math.inf)

@@ -3,6 +3,17 @@ class Evaluator:
         pass
 
     def evaluate(self, knoten, alpha, beta):
+        immediate = knoten.game_is_finished()
+        
+        if immediate != None:
+            if immediate == +1:
+                return +1
+            elif immediate == -1:
+                return -1
+            elif immediate == 0:
+                return 0
+            
+        
         # Annahme: beta > alpha
         # liefert Bewertung + besten Zug
         # bricht ab wenn bewertung <= alpha oder >=beta

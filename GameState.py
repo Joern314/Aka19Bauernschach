@@ -5,13 +5,11 @@ class GameState:
 
     def __init__(self, size_x, size_y):
         self.size = (size_x, size_y)
-        self.weissAmZug = True
         self.posWhite = []
         self.posBlack = []
-        self.populate_bauern()
+        self.blackpassed = False
 
     def populate_bauern(self):  # Argument positions?
-
         for i in range(self.size[0]):
             # zwei Reihen Bauern
             self.posWhite.append((i, 0))
@@ -48,9 +46,9 @@ class GameState:
     def clone(self):
         x, y = self.size
         g = GameState(x, y)
-        g.weissAmZug = self.weissAmZug
         g.posWhite = self.posWhite
         g.posBlack = self.posBlack
+        g.blackpassed = self.blackpassed
         return g
 
     # TODO sanity checking?
@@ -103,18 +101,20 @@ class GameState:
             return False # illegal direction?
 
 
-    def game_is_finished(self):
+    def game_is_finished(self): #+1=win 0=draw -1=loss None=not finished
         # one figure has traversed the board to the opponent’s side
         for figure in self.posWhite:
-            if figure[1] == self.size[1]:
-                return True
+            if figure[1] == self.size[1]-1:
+                return +1
 
         for figure in self.posBlack:
             if figure[1] == 0:
-                return True
+                return -1
 
         # no legal moves
         if self.list_all_legal_moves() == [Move((0,0),0, True)]:
-            return True
-
-        return False
+            if self.blackpassed:
+                return 0
+            else:
+                return None
+        return None
