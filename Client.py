@@ -16,7 +16,7 @@ class Client:
 
 
     def find_best_move(self):
-        rating, move = self.evaluator.evaluate(self.innerstate, -math.inf, math.inf)
+        rating, move = self.evaluator.evaluate(self.innerstate, -1, 1)
         return move
 
     def connect(self):

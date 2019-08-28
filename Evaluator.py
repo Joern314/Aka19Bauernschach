@@ -7,11 +7,11 @@ class Evaluator:
         
         if immediate != None:
             if immediate == +1:
-                return +1
+                return +1, None
             elif immediate == -1:
-                return -1
+                return -1, None
             elif immediate == 0:
-                return 0
+                return 0, None
             
         
         # Annahme: beta > alpha
@@ -23,10 +23,10 @@ class Evaluator:
         bestmove = None
         for move in legalMoves:
             child = knoten.clone()
-            # TODO get result and break if already winning
             child.applyMove(move)
+            child.rotateBoard()
             e, _ = self.evaluate(child, -beta, m)  # <= m, >=-beta
-            if m > e: # neue schlechteste Stellung für Gegner
+            if e <= m: # neue schlechteste Stellung für Gegner
                 bestmove = move
                 m = e
                 
