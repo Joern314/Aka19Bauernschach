@@ -19,7 +19,7 @@ class Move:
     @staticmethod
     def parse_move(movecode, invert, gamestate):
         if movecode == "pass":
-            return Move(None, None, passsing=True)
+            return Move(None, None, passing=True)
         else:
             x, y, r = movecode.split(",")
             return Move((int(x), int(y) if not invert else gamestate.size[1]-1-int(y)), int(r))
