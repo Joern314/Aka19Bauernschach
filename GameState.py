@@ -23,29 +23,14 @@ class GameState:
     def list_all_legal_moves(self):
         retVal = []
         for bauer in self.posWhite:
-            # gerade ziehen
-            x, y = bauer
-            try:
-                [self.posWhite + self.posBlack].index((x, y+1))
-            except ValueError:
-                if bauer[1] + 1 < self.size[1]:
-                    retVal.append((bauer[0], bauer[1], 0))
-
-            # "+1" schlagen (nach rechts schlagen)
-            try:
-                [self.posWhite + self.posBlack].index((x+1, y+1))
-            except ValueError:
-                if bauer[1] + 1 < self.size[1] \
-                  and bauer[0] + 1 < self.size[0]:
-                    retVal.append((bauer[0], bauer[1], +1))
-
-            # "-1" schlagen (nach links schlagen)
-            try:
-                [self.posWhite + self.posBlack].index((x-1, y+1))
-            except ValueError:
-                if bauer[1] + 1 < self.size[1] \
-                  and bauer[0] - 1 < self.size[0]:
-                    retVal.append((bauer[0], bauer[1], -1))
+            for richtung in [-1,0,+1]:
+                move = Move(bauer, richtung)
+                if self.checkIfLegal(move):
+                    retVal.append(move)
+                    
+        if len(retVal) == 0:
+            move = Move((0,0),0, True) #Pass
+            retVal.append(move)
 
         return retVal
 
@@ -83,4 +68,30 @@ class GameState:
 
     # TODO
     def checkIfLegal(self, move: Move):
-        pass
+        x, y = move.figur
+        if move.is_passing():
+            return True #assumes pass is only considered if no other moves were allowed
+        # gerade ziehen
+        elif move.richtung == 0:
+            return (x,y+1) not in [self.posWhite + self.posBlack] #if y+1 was oob then the game would already have ended
+        # "+1" schlagen (nach rechts schlagen)
+        elif move.richtung == +1:
+            if x+1 >= self.size[0]: #oob, again y+1 can be assumed in bounds
+                return False 
+            
+            if (x+1,y+1) in self.posWhite: #can't take white
+                return False
+            
+            return (x+1,y+1) in self.posBlack #need take black
+        # "-1" schlagen (nach links schlagen)
+        elif move.richtung == -1:
+        try:
+            if x-1 < 0: #oob
+                return False
+            
+            if (x-1,y+1) in self.posWhite:
+                return False
+            
+            return (x-1,y+1) in self.posBlack
+        else:
+            return False #illegal direction?
