@@ -1,14 +1,18 @@
 from random import random
 
 class Evaluator:
-    def __init__(self):
+    evaluator_functions = {}
+    def __init__(self, evaluator = "default"):
         self.max_depth = 10
-        pass
+        self.evaluator = evaluator
+        Evaluator.evaluator_functions = {"default": self.default_evaluate,
+                            "bauerndifferenz": self.bauerndifferenz}
+        
 
     def evaluate(self, knoten, alpha, beta):
-        return self.evaluate_D(knoten,alpha,beta, 0)
+        return self.evaluator_functions[self.evaluator](knoten,alpha,beta, 0)
 
-    def evaluate_D(self, knoten, alpha, beta, depth):
+    def default_evaluate(self, knoten, alpha, beta, depth):
         immediate = knoten.game_is_finished()
         
         if immediate != None:
@@ -20,7 +24,7 @@ class Evaluator:
                 return 0, None
             
         if depth == self.max_depth:
-            return self.heuristik(knoten, alpha, beta)
+            return self.bauerndifferenz(knoten, alpha, beta)
         
         # Annahme: beta > alpha
         # liefert Bewertung + besten Zug
@@ -33,7 +37,7 @@ class Evaluator:
             child = knoten.clone()
             child.applyMove(move)
             child.rotateBoard()
-            e, _ = self.evaluate_D(child, -beta, m, depth+1)  # <= m, >=-beta
+            e, _ = self.default_evaluate(child, -beta, m, depth+1)  # <= m, >=-beta
             if e < m: # neue schlechteste Stellung für Gegner
                 bestmove = move
                 m = e
@@ -42,5 +46,5 @@ class Evaluator:
                 break
         return -m, bestmove
     
-    def heuristik(self, knoten, alpha, beta):
+    def bauerndifferenz(self, knoten, alpha, beta):
         return (len(knoten.posWhite)-len(knoten.posBlack)+random())/1.0/(knoten.size[1]), None

@@ -1,17 +1,19 @@
 import math
 import sys
+import argparse
 from Evaluator import Evaluator
 from GameState import GameState
 from Move import Move
 
 
 class Client:
-    def __init__(self, width, height, name="JJF"):
+    def __init__(self, width, height, evaluator = "default", name="JJF"):
         self.color = ""
         self.width = width
         self.height = height
         self.innerstate = GameState(width, height)
-        self.evaluator = Evaluator()
+        self.evaluator = Evaluator(evaluator)
+
         self.name = name
 
         self.innerstate.populate_bauern()
@@ -68,18 +70,21 @@ class Client:
         return "black" if turn == "white" else "white"
 
 def main():
-    if len(sys.argv) >= 3:  # python3 Client.py width height
-        width = int(sys.argv[1])
-        height = int(sys.argv[2])
+    e = Evaluator()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("x", type = int)
+    parser.add_argument("y", type = int)
+    parser.add_argument("evaluator", choices = e.evaluator_functions.keys())
+    parser.add_argument("-n", "--name")
+    args = parser.parse_args()
+    del(e)
+    if not args.name:
+        name = "JJF_{}x{}_{}".format(args.x, args.y, args.evaluator)
     else:
-        width = 2
-        height = 4
-        
-    name = "JJF"
-    if len(sys.argv) >= 4:
-        name = sys.argv[3]
+        name = args.name
+
     # main function
-    client = Client(width, height, name=name)
+    client = Client(args.x, args.y, evaluator = args.evaluator, name=name)
     client.run()
 
 def test():
