@@ -16,7 +16,7 @@ class Client:
 
 
     def find_best_move(self):
-        rating, move = self.evaluator.evaluate(self.innerstate, -1, 1)
+        rating, move = self.evaluator.evaluate(self.innerstate, -100, 100)
         return move
 
     def connect(self):
@@ -67,13 +67,16 @@ class Client:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3:  # python3 Client.py width height
+    if len(sys.argv) >= 3:  # python3 Client.py width height
         width = int(sys.argv[1])
         height = int(sys.argv[2])
     else:
         width = 2
         height = 4
-
+        
+    name = "JJF"
+    if len(sys.argv) >= 4:
+        name = sys.argv[3]
     # main function
-    client = Client(width, height)
+    client = Client(width, height, name)
     client.run()

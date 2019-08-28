@@ -26,7 +26,7 @@ class Evaluator:
             child.applyMove(move)
             child.rotateBoard()
             e, _ = self.evaluate(child, -beta, m)  # <= m, >=-beta
-            if e <= m: # neue schlechteste Stellung für Gegner
+            if e < m: # neue schlechteste Stellung für Gegner
                 bestmove = move
                 m = e
                 
