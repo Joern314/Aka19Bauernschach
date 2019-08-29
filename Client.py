@@ -49,16 +49,18 @@ class Client:
 #                self.innerstate.printMe()
                 if turn == self.color:
                     move = self.find_best_move()
-                    print(Move.write_move(move, turn == "black", self.innerstate))
+                    print(Move.write_move(move))
                 else:
                     movestring = input()
                     if movestring == "done":
                         break
                     else:
-                        move = Move.parse_move(movestring, turn == "black", self.innerstate)
+                        move = Move.parse_move(movestring)
 
-                self.innerstate.applyMove(move)
-                self.innerstate.rotateBoard()
+                if turn == "white":
+                    self.innerstate.applyMove(move)
+                else:
+                    self.innerstate.applyMove_b(move)
                 turn = self.invert_turn(turn)
                 
                 if self.innerstate.game_is_finished() != None:
