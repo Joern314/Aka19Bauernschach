@@ -90,7 +90,7 @@ def main():
     client.run()
 
 def test():
-    c = Client(6,6)
+    c = Client(4,4)
     is_white = True
     while c.innerstate.game_is_finished() is None:
         move = c.find_best_move(is_white)
