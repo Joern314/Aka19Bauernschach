@@ -33,7 +33,8 @@ class GameState:
 
     def is_game_lost(self):
         return (self.black & self.lossmask) != 0
-    
+    def is_game_won(self):
+        return (self.white & self.winmask) != 0
     def is_game_draw(self):
         return self.lastpassed and self.thispassed
 
@@ -53,6 +54,7 @@ class GameState:
         self.lastpassed = False
         self.thispassed = False
         
+        self.winmask = uint64(0)
         self.lossmask = uint64(0)
 
     def populate_bauern(self):  # Argument positions?
@@ -60,6 +62,7 @@ class GameState:
             # zwei Reihen Bauern
             self.white    |= uint64(1 << (i*8 + 0))
             self.black    |= uint64(1 << (i*8 + self.size_y-1))
+            self.winmask  |= uint64(1 << (i*8 + self.size_y-1))
             self.lossmask |= uint64(1 << (i*8 + 0))
 
     def getSize(self):
@@ -85,7 +88,7 @@ class GameState:
 
     def rotateBoard(self):
         self.white, self.black = reverse_bits(self.black), reverse_bits(self.white)
-#        self.lossmask = reverse_bits(self.lossmask)
+        self.lossmask, self.winmask = reverse_bits(self.winmask), reverse_bits(self.lossmask)
 
 
     def clone(self):
@@ -94,6 +97,7 @@ class GameState:
         g.black = self.black
         g.lastpassed = self.lastpassed
         g.thispassed = self.thispassed
+        g.winmask = self.winmask
         g.lossmask = self.lossmask
         return g
 
@@ -117,11 +121,16 @@ class GameState:
             print("ill. move")
             #error
             return
+        
+    def printMe(self):
+        print(bin(self.white)+" "+bin(self.black))
 
     def game_is_finished(self): #+1=win 0=draw -1=loss None=not finished
         # one figure has traversed the board to the opponent’s side
         if self.is_game_lost():
             return -1
+        elif self.is_game_won():
+            return +1
         elif self.is_game_draw():
             return 0
         else:

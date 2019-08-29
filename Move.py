@@ -17,10 +17,10 @@ class Move:
         return self.figur
     
     def get_x(self, board):
-        return int(math.log2(self.figur) / board.size_y)
+        return int(math.log2(self.figur) / 8)
 
     def get_y(self, board):
-        return int(math.log2(self.figur)) % board.size_y
+        return int(math.log2(self.figur))%8
         
     def copy(self):
         return Move(self.figur, self.richtung)
@@ -37,8 +37,8 @@ class Move:
             x, y, r = movecode.split(",")
             x,y,r = int(x),int(y),int(r)
             if invert:
-                x = board.size_x-1 - x
-                y = board.size_y-1 - y
+                x = (8-1) - x
+                y = (8-1) - y
                 r = -r
             move = Move(uint64(1 << (x*8+y)), r)
             return move

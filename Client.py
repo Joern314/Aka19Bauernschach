@@ -33,7 +33,7 @@ class Client:
         self.innerstate.populate_bauern()
         
     def end_game(self):
-        print("finished: " + str(self.innerstate.game_is_finished()))
+#        print("finished: " + str(self.innerstate.game_is_finished()))
         movestring = input()
         if movestring == "done":
             return
@@ -46,6 +46,7 @@ class Client:
             turn = "white"
             self.start_game()
             while True:
+#                self.innerstate.printMe()
                 if turn == self.color:
                     move = self.find_best_move()
                     print(Move.write_move(move, turn == "black", self.innerstate))
