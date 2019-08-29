@@ -88,7 +88,7 @@ def main():
     client.run()
 
 def test():
-    c = Client(5,5)
+    c = Client(4,4)
     turn = False
     while not c.innerstate.game_is_finished():
         move = c.find_best_move()

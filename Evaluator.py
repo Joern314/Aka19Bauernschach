@@ -3,7 +3,7 @@ from random import random
 class Evaluator:
     evaluator_functions = {}
     def __init__(self, evaluator = "default"):
-        self.max_depth = 10
+        self.max_depth = 100
         self.evaluator = evaluator
         Evaluator.evaluator_functions = {"default": self.default_evaluate,
                             "bauerndifferenz": self.bauerndifferenz}
@@ -47,4 +47,5 @@ class Evaluator:
         return -m, bestmove
     
     def bauerndifferenz(self, knoten, alpha, beta):
+        print("nondet")
         return (len(knoten.posWhite)-len(knoten.posBlack)+random())/1.0/(knoten.size[1]), None
