@@ -57,18 +57,18 @@ class GameState:
 
     def list_all_legal_moves(self):
         retVal = []
-        self.extract_all_moves(retVal, self.white & ~((self.black >> (1)) | (self.white >> (1))),    0)
-        self.extract_all_moves(retVal, self.white & (self.black >> (8 + 1)), 1)
         self.extract_all_moves(retVal, self.white & (self.black << (8 - 1)), -1)
+        self.extract_all_moves(retVal, self.white & (self.black >> (8 + 1)), 1)
+        self.extract_all_moves(retVal, self.white & ~((self.black >> (1)) | (self.white >> (1))),    0)
         if len(retVal) == 0:
             retVal.append(Move(0,0)) #pass
         return retVal
 
     def list_all_legal_moves_b(self):
         retVal = []
-        self.extract_all_moves(retVal, self.black & ~((self.white << (1)) | (self.black << (1))),    0)
-        self.extract_all_moves(retVal, self.black & (self.white >> (8 - 1)), 1)
         self.extract_all_moves(retVal, self.black & (self.white << (8 + 1)), -1)
+        self.extract_all_moves(retVal, self.black & (self.white >> (8 - 1)), 1)
+        self.extract_all_moves(retVal, self.black & ~((self.white << (1)) | (self.black << (1))),    0)
         if len(retVal) == 0:
             retVal.append(Move(0,0)) #pass
         return retVal
