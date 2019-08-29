@@ -33,6 +33,7 @@ class Evaluator:
         legalMoves = knoten.list_all_legal_moves() # liste aller kanten zu kindern
         m = -alpha # schlechteste Stellung für den Gegner hat Wert m
         bestmove = None
+        
         for move in legalMoves:
             child = knoten.clone()
             child.applyMove(move)
@@ -48,4 +49,4 @@ class Evaluator:
     
     def bauerndifferenz(self, knoten, alpha, beta):
         print("nondet")
-        return (len(knoten.posWhite)-len(knoten.posBlack)+random())/1.0/(knoten.size[1]), None
+        return 0, None

@@ -1,11 +1,14 @@
+import math
+from Bitreverse import reverse_bits
+from numpy import uint64
+
 class Move:
-    def __init__(self, figur, richtung, passing=False):
-        self.figur = figur  # x,y
+    def __init__(self, figur, richtung):
+        self.figur = figur  # bitmask
         self.richtung = richtung  # -1,0,1
-        self.passing = passing  # true,false
 
     def is_passing(self):
-        return self.passing
+        return self.figur == 0
 
     def get_richtung(self):
         return self.richtung
@@ -13,20 +16,40 @@ class Move:
     def get_figur(self):
         return self.figur
     
+    def get_x(self, board):
+        return math.log2(self.figur) / board.size_y
+
+    def get_y(self, board):
+        return math.log2(self.figur) % board.size_y
+        
+    def copy(self):
+        return Move(self.figur, self.richtung)
+    
     def rotateBoard(self, board):
-        self.figur = (self.figur[0], board.size[1]-1 - self.figur[1])
+        self.figur = reverse_bits(self.figur)
+        self.richtung = - self.richtung
 
     @staticmethod
-    def parse_move(movecode, invert, gamestate):
+    def parse_move(movecode, invert, board):
         if movecode == "pass":
-            return Move(None, None, passing=True)
+            return Move(0,0)
         else:
             x, y, r = movecode.split(",")
-            return Move((int(x), int(y) if not invert else gamestate.size[1]-1-int(y)), int(r))
+            x,y,r = int(x),int(y),int(r)
+            if invert:
+                x = board.size_x-1 - x
+                y = board.size_y-1 - y
+                r = -r
+            move = Move(uint64(1 << (x*8+y)), r)
+            return move
 
     @staticmethod
-    def write_move(move, invert, gamestate):
-        if move.passing:
+    def write_move(move, invert, board):
+        if move.is_passing():
             return "pass"
+        elif not invert:
+            return str(move.get_x(board)) + "," + str(move.get_y(board)) + "," + str(move.richtung)
         else:
-            return str(move.figur[0]) + "," + str(move.figur[1] if not invert else gamestate.size[1]-1-move.figur[1]) + "," + str(move.richtung)
+            copy = move.copy()
+            copy.rotateBoard(board)
+            return Move.write_move(copy, False, board)    

@@ -1,56 +1,100 @@
-from Move import *
+from Move import Move
+from numpy import uint64
+from Bitreverse import reverse_bits
 
+# GAMESTATE
 
 class GameState:
+    # MATH FUNCTIONS
+    def extract_next_pawn(self, bitmask):
+        return bitmask & (-bitmask)
+    def delete_next_pawn(self, bitmask):
+        return bitmask & (bitmask-1)
+    def get_turnmask_up(self):
+        return self.white & ~((self.black >> 1) | (self.white >> 1))
+    def get_turnmask_left(self):
+        return self.white & (self.black << (8 - 1))
+    def get_turnmask_right(self):
+        return self.white & (self.black >> (8 + 1))
+
+    def move_up(self, pawn):
+        npawn = pawn << 1
+        self.white = (self.white & ~pawn) | npawn
+    
+    def move_left(self, pawn):
+        npawn = pawn >> (8 - 1)
+        self.white = (self.white & ~pawn) | npawn
+        self.black = (self.black & ~npawn)
+
+    def move_right(self, pawn):
+        npawn = pawn << (8 + 1)
+        self.white = (self.white & ~pawn) | npawn
+        self.black = (self.black & ~npawn)
+
+    def is_game_lost(self):
+        return (self.black & self.lossmask) != 0
+    
+    def is_game_draw(self):
+        return self.lastpassed and self.thispassed
+
+    # expand math
+    def extractMove(self, bitmask, direction):
+        pawn = self.extract_next_pawn(bitmask)
+        move = Move(pawn, direction)
+        return self.delete_next_pawn(bitmask), move
 
     def __init__(self, size_x, size_y):
-        self.size = (size_x, size_y)
-        self.posWhite = []
-        self.posBlack = []
+        self.size_x = size_x
+        self.size_y = size_y
+
+        self.white = uint64(0)
+        self.black = uint64(0)
+
         self.lastpassed = False
         self.thispassed = False
+        
+        self.lossmask = uint64(0)
 
     def populate_bauern(self):  # Argument positions?
-        for i in range(self.size[0]):
+        for i in range(self.size_x):
             # zwei Reihen Bauern
-            self.posWhite.append((i, 0))
-            self.posBlack.append((i, self.size[1]-1))
+            self.white    |= uint64(1 << (i*8 + 0))
+            self.black    |= uint64(1 << (i*8 + self.size_y-1))
+            self.lossmask |= uint64(1 << (i*8 + 1))
 
     def getSize(self):
         return self.size
 
+    def extract_all_moves(self, retVal, turnmask, direction):
+        while turnmask != 0:
+            turnmask, move = self.extractMove(turnmask, direction)
+            retVal.append(move)
+
     def list_all_legal_moves(self):
         retVal = []
-        for richtung in [-1,+1,0]:
-            for bauer in self.posWhite:
-                move = Move(bauer, richtung)
-                if self.checkIfLegal(move):
-                    retVal.append(move)
-                    
+        
+        self.extract_all_moves(retVal, self.get_turnmask_up(),    0)
+        self.extract_all_moves(retVal, self.get_turnmask_right(), 1)
+        self.extract_all_moves(retVal, self.get_turnmask_left(), -1)
+
         if len(retVal) == 0:
-            move = Move(None,None, True) # Pass
+            move = Move(0,0) # Pass
             retVal.append(move)
 
         return retVal
 
     def rotateBoard(self):
-        black = []
-        white = []
-        for figur in self.posWhite:
-            black.append((figur[0],self.size[1] - 1 - figur[1]))
-        for figur in self.posBlack:
-            white.append((figur[0], self.size[1] -1 - figur[1]))
-        self.posWhite=white
-        self.posBlack=black
+        self.white, self.black = reverse_bits(self.black), reverse_bits(self.white)
+        self.lossmask = reverse_bits(self.lossmask)
 
 
     def clone(self):
-        x, y = self.size
-        g = GameState(x, y)
-        g.posWhite = self.posWhite.copy()
-        g.posBlack = self.posBlack.copy()
+        g = GameState(self.size_x, self.size_y)
+        g.white = self.white
+        g.black = self.black
         g.lastpassed = self.lastpassed
         g.thispassed = self.thispassed
+        g.lossmask = self.lossmask
         return g
 
     # TODO sanity checking?
@@ -62,69 +106,23 @@ class GameState:
         if move.is_passing():
             self.thispassed = True
             return
-
-        # delete the bauer from the pos* array
-        # and add it again with the new position
-
-        self.posWhite.remove(move.get_figur())
-
-        # branch for straight (0) or hit (-1, +1)
-        if move.get_richtung() == 0:
-            self.posWhite.append((move.get_figur()[0], move.get_figur()[1]+1))
-
-        elif move.get_richtung() == +1:
-            self.posWhite.append((move.get_figur()[0]+1, move.get_figur()[1]+1))
-            self.posBlack.remove((move.get_figur()[0]+1, move.get_figur()[1]+1))
-
-        elif move.get_richtung() == -1:
-            self.posWhite.append((move.get_figur()[0]-1, move.get_figur()[1]+1))
-            self.posBlack.remove((move.get_figur()[0]-1, move.get_figur()[1]+1))
-
-
-    def checkIfLegal(self, move: Move):        
-        if move.is_passing():
-            return True # assumes pass is only considered if no other moves were allowed
-
-        x, y = move.figur
-        if not (x,y) in self.posWhite:
-            return False #not a white pawn
         
-        # gerade ziehen
         if move.richtung == 0:
-            return (x,y+1) not in (self.posWhite + self.posBlack) #if y+1 was oob then the game would already have ended
-        # "+1" schlagen (nach rechts schlagen)
-        elif move.richtung == +1:
-            if x+1 >= self.size[0]: # oob, again y+1 can be assumed in bounds
-                return False 
-            
-            if (x+1,y+1) in self.posWhite: # can't take white
-                return False
-            
-            return (x+1,y+1) in self.posBlack # need take black
-        # "-1" schlagen (nach links schlagen)
+            self.move_up(move.figur)
+        elif move.richtung == 1:
+            self.move_right(move.figur)
         elif move.richtung == -1:
-            if x-1 < 0: #oob
-                return False
-            
-            if (x-1,y+1) in self.posWhite:
-                return False
-            
-            return (x-1,y+1) in self.posBlack
+            self.move_left(move.figur)
         else:
-            return False # illegal direction?
-
+            print("ill. move")
+            #error
+            return
 
     def game_is_finished(self): #+1=win 0=draw -1=loss None=not finished
         # one figure has traversed the board to the opponent’s side
-        for figure in self.posWhite:
-            if figure[1] == self.size[1]-1:
-                return +1
-
-        for figure in self.posBlack:
-            if figure[1] == 0:
-                return -1
-
-        # no legal moves
-        if self.lastpassed and self.thispassed:
+        if self.is_game_lost():
+            return -1
+        elif self.is_game_draw():
             return 0
-        return None
+        else:
+            return None
