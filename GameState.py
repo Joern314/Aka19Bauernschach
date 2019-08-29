@@ -1,6 +1,6 @@
 from Move import Move
 from numpy import uint64
-from Bitreverse import reverse_bits
+#from Bitreverse import reverse_bits
 
 # GAMESTATE
 
@@ -72,16 +72,14 @@ class GameState:
         self.lastpassed = False
         self.thispassed = False
         
-        self.whitemask = uint64(0)
-        self.blackmask = uint64(0)
+        self.blackmask = uint64(0x0101010101010101)
+        self.whitemask = self.blackmask << uint64(size_y-1)
 
     def populate_bauern(self):  # Argument positions?
         for i in range(self.size_x):
             # zwei Reihen Bauern
             self.white      |= uint64(1 << (i*8 + 0))
             self.black      |= uint64(1 << (i*8 + self.size_y-1))
-            self.whitemask  |= uint64(1 << (i*8 + self.size_y-1))
-            self.blackmask  |= uint64(1 << (i*8 + 0))
 
     def extract_all_moves(self, retVal, turnmask, direction):
         while turnmask != 0:
@@ -117,8 +115,6 @@ class GameState:
         g.black = self.black
         g.lastpassed = self.lastpassed
         g.thispassed = self.thispassed
-        g.winmask = self.winmask
-        g.lossmask = self.lossmask
         return g
 
     def applyMove(self, move : Move):

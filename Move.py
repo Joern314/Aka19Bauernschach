@@ -1,5 +1,5 @@
 import math
-from Bitreverse import reverse_bits
+#from Bitreverse import reverse_bits
 from numpy import uint64
 
 class Move:

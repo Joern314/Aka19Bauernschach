@@ -19,8 +19,8 @@ class Client:
         self.innerstate.populate_bauern()
 
 
-    def find_best_move(self):
-        rating, move = self.evaluator.evaluate(self.innerstate, -100, 100)
+    def find_best_move(self, is_white):
+        rating, move = self.evaluator.evaluate(self.innerstate, -100, 100, is_white)
         return move
 
     def connect(self):
@@ -48,7 +48,7 @@ class Client:
             while True:
 #                self.innerstate.printMe()
                 if turn == self.color:
-                    move = self.find_best_move()
+                    move = self.find_best_move(turn == "white")
                     print(Move.write_move(move))
                 else:
                     movestring = input()
@@ -90,15 +90,17 @@ def main():
     client.run()
 
 def test():
-    c = Client(4,4)
-    turn = False
-    while not c.innerstate.game_is_finished():
-        move = c.find_best_move()
-        print(Move.write_move(move, turn, c.innerstate))
-        c.innerstate.applyMove(move)
-        c.innerstate.rotateBoard()
-        turn = not turn
-    print("result for white = " + str(c.innerstate.game_is_finished() * (-1 if turn else 1)))
+    c = Client(6,6)
+    is_white = True
+    while c.innerstate.game_is_finished() is None:
+        move = c.find_best_move(is_white)
+        print(Move.write_move(move))
+        if is_white:
+            c.innerstate.applyMove(move)
+        else:
+            c.innerstate.applyMove_b(move)
+        is_white = not is_white
+    print("result for white = " + str(c.innerstate.game_is_finished()))
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
