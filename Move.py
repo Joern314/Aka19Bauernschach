@@ -17,10 +17,10 @@ class Move:
         return self.figur
     
     def get_x(self, board):
-        return math.log2(self.figur) / board.size_y
+        return int(math.log2(self.figur) / board.size_y)
 
     def get_y(self, board):
-        return math.log2(self.figur) % board.size_y
+        return int(math.log2(self.figur)) % board.size_y
         
     def copy(self):
         return Move(self.figur, self.richtung)

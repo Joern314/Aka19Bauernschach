@@ -13,6 +13,12 @@ class Evaluator:
         return self.evaluator_functions[self.evaluator](knoten,alpha,beta, 0)
 
     def default_evaluate(self, knoten, alpha, beta, depth):
+        if(depth == 0):
+            print("eval start ")
+        if(depth == 100):
+            print("eval 100 ")
+            return
+        
         immediate = knoten.game_is_finished()
         
         if immediate != None:

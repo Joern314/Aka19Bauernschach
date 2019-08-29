@@ -33,6 +33,7 @@ class Client:
         self.innerstate.populate_bauern()
         
     def end_game(self):
+        print("finished: " + str(self.innerstate.game_is_finished()))
         movestring = input()
         if movestring == "done":
             return
@@ -55,8 +56,6 @@ class Client:
                     else:
                         move = Move.parse_move(movestring, turn == "black", self.innerstate)
 
-                if not self.innerstate.checkIfLegal(move):
-                    print("uups") #error
                 self.innerstate.applyMove(move)
                 self.innerstate.rotateBoard()
                 turn = self.invert_turn(turn)

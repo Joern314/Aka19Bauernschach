@@ -9,25 +9,25 @@ class GameState:
     def extract_next_pawn(self, bitmask):
         return bitmask & (-bitmask)
     def delete_next_pawn(self, bitmask):
-        return bitmask & (bitmask-1)
+        return bitmask & (bitmask-uint64(1))
     def get_turnmask_up(self):
-        return self.white & ~((self.black >> 1) | (self.white >> 1))
+        return self.white & ~((self.black >> uint64(1)) | (self.white >> uint64(1)))
     def get_turnmask_left(self):
-        return self.white & (self.black << (8 - 1))
+        return self.white & (self.black << uint64(8 - 1))
     def get_turnmask_right(self):
-        return self.white & (self.black >> (8 + 1))
+        return self.white & (self.black >> uint64(8 + 1))
 
     def move_up(self, pawn):
-        npawn = pawn << 1
+        npawn = pawn << uint64(1)
         self.white = (self.white & ~pawn) | npawn
     
     def move_left(self, pawn):
-        npawn = pawn >> (8 - 1)
+        npawn = pawn >> uint64(8 - 1)
         self.white = (self.white & ~pawn) | npawn
         self.black = (self.black & ~npawn)
 
     def move_right(self, pawn):
-        npawn = pawn << (8 + 1)
+        npawn = pawn << uint64(8 + 1)
         self.white = (self.white & ~pawn) | npawn
         self.black = (self.black & ~npawn)
 
@@ -60,7 +60,7 @@ class GameState:
             # zwei Reihen Bauern
             self.white    |= uint64(1 << (i*8 + 0))
             self.black    |= uint64(1 << (i*8 + self.size_y-1))
-            self.lossmask |= uint64(1 << (i*8 + 1))
+            self.lossmask |= uint64(1 << (i*8 + 0))
 
     def getSize(self):
         return self.size
@@ -85,7 +85,7 @@ class GameState:
 
     def rotateBoard(self):
         self.white, self.black = reverse_bits(self.black), reverse_bits(self.white)
-        self.lossmask = reverse_bits(self.lossmask)
+#        self.lossmask = reverse_bits(self.lossmask)
 
 
     def clone(self):
