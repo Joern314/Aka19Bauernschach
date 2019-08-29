@@ -1,5 +1,5 @@
 from Move import Move
-from numpy import uint64,uint8
+#from numpy import ,uint8
 #from Bitreverse import reverse_bits
 
 # GAMESTATE
@@ -7,27 +7,27 @@ from numpy import uint64,uint8
 class GameState:
     # MATH FUNCTIONS
     def move_up(self, pawn):
-        npawn = pawn << uint64(1)
+        npawn = pawn << (1)
         self.white = (self.white & ~pawn) | npawn
     def move_up_b(self, pawn):
-        npawn = pawn >> uint64(1)
+        npawn = pawn >> (1)
         self.black = (self.black & ~pawn) | npawn
     
     def move_left(self, pawn):
-        npawn = pawn >> uint64(8 - 1)
+        npawn = pawn >> (8 - 1)
         self.white = (self.white & ~pawn) | npawn
         self.black = (self.black & ~npawn)
     def move_left_b(self, pawn):
-        npawn = pawn >> uint64(8 + 1)
+        npawn = pawn >> (8 + 1)
         self.black = (self.black & ~pawn) | npawn
         self.white = (self.white & ~npawn)
 
     def move_right(self, pawn):
-        npawn = pawn << uint64(8 + 1)
+        npawn = pawn << (8 + 1)
         self.white = (self.white & ~pawn) | npawn
         self.black = (self.black & ~npawn)
     def move_right_b(self, pawn):
-        npawn = pawn << uint64(8 - 1)
+        npawn = pawn << (8 - 1)
         self.black = (self.black & ~pawn) | npawn
         self.white = (self.white & ~npawn)
 
@@ -35,41 +35,41 @@ class GameState:
         self.size_x = size_x
         self.size_y = size_y
 
-        self.white = uint64(0)
-        self.black = uint64(0)
+        self.white = (0)
+        self.black = (0)
 
         self.lastpassed = False
         self.thispassed = False
         
-        self.blackmask = uint64(0x0101010101010101)
-        self.whitemask = self.blackmask << uint64(size_y-1)
+        self.blackmask = (0x0101010101010101)
+        self.whitemask = self.blackmask << (size_y-1)
 
     def populate_bauern(self):  # Argument positions?
         for i in range(self.size_x):
             # zwei Reihen Bauern
-            self.white      |= uint64(1 << (i*8 + 0))
-            self.black      |= uint64(1 << (i*8 + self.size_y-1))
+            self.white      |= (1 << (i*8 + 0))
+            self.black      |= (1 << (i*8 + self.size_y-1))
 
     def extract_all_moves(self, retVal, turnmask, direction):
         while turnmask:
             pawn = turnmask & (-turnmask)
-            turnmask = turnmask & (turnmask-uint64(1))
+            turnmask = turnmask & (turnmask-(1))
             retVal.append(Move(pawn, direction))
 
     def list_all_legal_moves(self):
         retVal = []
-        self.extract_all_moves(retVal, self.white & ~((self.black >> uint64(1)) | (self.white >> uint64(1))),    0)
-        self.extract_all_moves(retVal, self.white & (self.black >> uint64(8 + 1)), 1)
-        self.extract_all_moves(retVal, self.white & (self.black << uint64(8 - 1)), -1)
+        self.extract_all_moves(retVal, self.white & ~((self.black >> (1)) | (self.white >> (1))),    0)
+        self.extract_all_moves(retVal, self.white & (self.black >> (8 + 1)), 1)
+        self.extract_all_moves(retVal, self.white & (self.black << (8 - 1)), -1)
         if len(retVal) == 0:
             retVal.append(Move(0,0)) #pass
         return retVal
 
     def list_all_legal_moves_b(self):
         retVal = []
-        self.extract_all_moves(retVal, self.black & ~((self.white << uint64(1)) | (self.black << uint64(1))),    0)
-        self.extract_all_moves(retVal, self.black & (self.white >> uint64(8 - 1)), 1)
-        self.extract_all_moves(retVal, self.black & (self.white << uint64(8 + 1)), -1)
+        self.extract_all_moves(retVal, self.black & ~((self.white << (1)) | (self.black << (1))),    0)
+        self.extract_all_moves(retVal, self.black & (self.white >> (8 - 1)), 1)
+        self.extract_all_moves(retVal, self.black & (self.white << (8 + 1)), -1)
         if len(retVal) == 0:
             retVal.append(Move(0,0)) #pass
         return retVal
@@ -96,14 +96,14 @@ class GameState:
         if move.is_passing():
             self.thispassed = True
         elif move.richtung == 0:
-            npawn = pawn << uint64(1)
+            npawn = pawn * 2
             self.white = (self.white & ~pawn) | npawn
         elif move.richtung == 1:
-            npawn = pawn << uint64(8 + 1)
+            npawn = pawn << (8 + 1)
             self.white = (self.white & ~pawn) | npawn
             self.black = (self.black & ~npawn)
         else:
-            npawn = pawn >> uint64(8 - 1)
+            npawn = pawn >> (8 - 1)
             self.white = (self.white & ~pawn) | npawn
             self.black = (self.black & ~npawn)
 
@@ -116,14 +116,14 @@ class GameState:
         if move.is_passing():
             self.thispassed = True
         elif move.richtung == 0:
-            npawn = pawn >> uint64(1)
+            npawn = pawn >> (1)
             self.black = (self.black & ~pawn) | npawn
         elif move.richtung == 1:
-            npawn = pawn << uint64(8 - 1)
+            npawn = pawn << (8 - 1)
             self.black = (self.black & ~pawn) | npawn
             self.white = (self.white & ~npawn)
         else:
-            npawn = pawn >> uint64(8 + 1)
+            npawn = pawn >> (8 + 1)
             self.black = (self.black & ~pawn) | npawn
             self.white = (self.white & ~npawn)
 

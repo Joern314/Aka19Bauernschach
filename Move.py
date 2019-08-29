@@ -1,6 +1,6 @@
 import math
 #from Bitreverse import reverse_bits
-from numpy import uint64
+#from numpy import 
 
 class Move:
     def __init__(self, figur, richtung):
@@ -32,7 +32,7 @@ class Move:
         else:
             x, y, r = movecode.split(",")
             x,y,r = int(x),int(y),int(r)
-            move = Move(uint64(1 << (x*8+y)), r)
+            move = Move((1 << (x*8+y)), r)
             return move
 
     @staticmethod
