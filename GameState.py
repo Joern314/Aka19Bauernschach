@@ -1,29 +1,11 @@
 from Move import Move
-from numpy import uint64
+from numpy import uint64,uint8
 #from Bitreverse import reverse_bits
 
 # GAMESTATE
 
 class GameState:
     # MATH FUNCTIONS
-    def extract_next_pawn(self, bitmask):
-        return bitmask & (-bitmask)
-    def delete_next_pawn(self, bitmask):
-        return bitmask & (bitmask-uint64(1))
-
-    def get_turnmask_up(self):
-        return self.white & ~((self.black >> uint64(1)) | (self.white >> uint64(1)))
-    def get_turnmask_up_b(self):
-        return self.black & ~((self.white << uint64(1)) | (self.black << uint64(1)))
-    def get_turnmask_left(self):
-        return self.white & (self.black << uint64(8 - 1))
-    def get_turnmask_left_b(self):
-        return self.black & (self.white << uint64(8 + 1))
-    def get_turnmask_right(self):
-        return self.white & (self.black >> uint64(8 + 1))
-    def get_turnmask_right_b(self):
-        return self.black & (self.white >> uint64(8 - 1))
-
     def move_up(self, pawn):
         npawn = pawn << uint64(1)
         self.white = (self.white & ~pawn) | npawn
@@ -49,19 +31,6 @@ class GameState:
         self.black = (self.black & ~pawn) | npawn
         self.white = (self.white & ~npawn)
 
-    def is_game_won(self):
-        return (self.white & self.whitemask) != 0
-    def is_game_won_b(self):
-        return (self.black & self.blackmask) != 0
-    def is_game_draw(self):
-        return self.lastpassed and self.thispassed
-
-    # expand math
-    def extractMove(self, bitmask, direction):
-        pawn = self.extract_next_pawn(bitmask)
-        move = Move(pawn, direction)
-        return self.delete_next_pawn(bitmask), move
-
     def __init__(self, size_x, size_y):
         self.size_x = size_x
         self.size_y = size_y
@@ -82,24 +51,25 @@ class GameState:
             self.black      |= uint64(1 << (i*8 + self.size_y-1))
 
     def extract_all_moves(self, retVal, turnmask, direction):
-        while turnmask != 0:
-            turnmask, move = self.extractMove(turnmask, direction)
-            retVal.append(move)
+        while turnmask:
+            pawn = turnmask & (-turnmask)
+            turnmask = turnmask & (turnmask-uint64(1))
+            retVal.append(Move(pawn, direction))
 
     def list_all_legal_moves(self):
         retVal = []
-        self.extract_all_moves(retVal, self.get_turnmask_up(),    0)
-        self.extract_all_moves(retVal, self.get_turnmask_right(), 1)
-        self.extract_all_moves(retVal, self.get_turnmask_left(), -1)
+        self.extract_all_moves(retVal, self.white & ~((self.black >> uint64(1)) | (self.white >> uint64(1))),    0)
+        self.extract_all_moves(retVal, self.white & (self.black >> uint64(8 + 1)), 1)
+        self.extract_all_moves(retVal, self.white & (self.black << uint64(8 - 1)), -1)
         if len(retVal) == 0:
             retVal.append(Move(0,0)) #pass
         return retVal
 
     def list_all_legal_moves_b(self):
         retVal = []
-        self.extract_all_moves(retVal, self.get_turnmask_up_b(),    0)
-        self.extract_all_moves(retVal, self.get_turnmask_right_b(), 1)
-        self.extract_all_moves(retVal, self.get_turnmask_left_b(), -1)
+        self.extract_all_moves(retVal, self.black & ~((self.white << uint64(1)) | (self.black << uint64(1))),    0)
+        self.extract_all_moves(retVal, self.black & (self.white >> uint64(8 - 1)), 1)
+        self.extract_all_moves(retVal, self.black & (self.white << uint64(8 + 1)), -1)
         if len(retVal) == 0:
             retVal.append(Move(0,0)) #pass
         return retVal
@@ -121,27 +91,41 @@ class GameState:
         self.lastpassed = self.thispassed
         self.thispassed = False
         
-        if move.is_passing():
-            self.thispassed = True
-        elif move.richtung == 0:
-            self.move_up(move.figur)
-        elif move.richtung == 1:
-            self.move_right(move.figur)
-        else:
-            self.move_left(move.figur)
-
-    def applyMove_b(self, move : Move):
-        self.lastpassed = self.thispassed
-        self.thispassed = False
+        pawn = move.figur
         
         if move.is_passing():
             self.thispassed = True
         elif move.richtung == 0:
-            self.move_up_b(move.figur)
+            npawn = pawn << uint64(1)
+            self.white = (self.white & ~pawn) | npawn
         elif move.richtung == 1:
-            self.move_right_b(move.figur)
+            npawn = pawn << uint64(8 + 1)
+            self.white = (self.white & ~pawn) | npawn
+            self.black = (self.black & ~npawn)
         else:
-            self.move_left_b(move.figur)
+            npawn = pawn >> uint64(8 - 1)
+            self.white = (self.white & ~pawn) | npawn
+            self.black = (self.black & ~npawn)
+
+    def applyMove_b(self, move : Move):
+        self.lastpassed = self.thispassed
+        self.thispassed = False
+
+        pawn = move.figur
+
+        if move.is_passing():
+            self.thispassed = True
+        elif move.richtung == 0:
+            npawn = pawn >> uint64(1)
+            self.black = (self.black & ~pawn) | npawn
+        elif move.richtung == 1:
+            npawn = pawn << uint64(8 - 1)
+            self.black = (self.black & ~pawn) | npawn
+            self.white = (self.white & ~npawn)
+        else:
+            npawn = pawn >> uint64(8 + 1)
+            self.black = (self.black & ~pawn) | npawn
+            self.white = (self.white & ~npawn)
 
         
     def printMe(self):
@@ -149,11 +133,11 @@ class GameState:
 
     def game_is_finished(self): #+1=win white 0=draw -1=win black None=not finished
         # one figure has traversed the board to the opponent’s side
-        if self.is_game_won():
+        if (self.white & self.whitemask):
             return +1
-        elif self.is_game_won_b():
+        elif (self.black & self.blackmask):
             return -1
-        elif self.is_game_draw():
+        elif self.lastpassed and self.thispassed:
             return 0
         else:
             return None
