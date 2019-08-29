@@ -91,7 +91,8 @@ def main():
 def test():
     c = Client(4,4)
     turn = False
-    while not c.innerstate.game_is_finished():
+    # (not 0) unfortunately evaluates to True
+    while c.innerstate.game_is_finished() == None:
         move = c.find_best_move()
         print(Move.write_move(move, turn, c.innerstate))
         c.innerstate.applyMove(move)
