@@ -38,8 +38,7 @@ class GameState:
         self.white = (0)
         self.black = (0)
 
-        self.lastpassed = False
-        self.thispassed = False
+        self.lastpassed = 0
         
         self.blackmask = (0x0101010101010101)
         self.whitemask = self.blackmask << (size_y-1)
@@ -84,48 +83,31 @@ class GameState:
         g.white = self.white
         g.black = self.black
         g.lastpassed = self.lastpassed
-        g.thispassed = self.thispassed
         return g
 
     def applyMove(self, move : Move):
-        self.lastpassed = self.thispassed
-        self.thispassed = False
-        
-        pawn = move.figur
+        self.lastpassed >>= 1
         
         if move.is_passing():
-            self.thispassed = True
+            self.lastpassed |= 0b10
         elif move.richtung == 0:
-            npawn = pawn * 2
-            self.white = (self.white & ~pawn) | npawn
+            self.move_up(move.figur)
         elif move.richtung == 1:
-            npawn = pawn << (8 + 1)
-            self.white = (self.white & ~pawn) | npawn
-            self.black = (self.black & ~npawn)
+            self.move_right(move.figur)
         else:
-            npawn = pawn >> (8 - 1)
-            self.white = (self.white & ~pawn) | npawn
-            self.black = (self.black & ~npawn)
+            self.move_left(move.figur)
 
     def applyMove_b(self, move : Move):
-        self.lastpassed = self.thispassed
-        self.thispassed = False
-
-        pawn = move.figur
+        self.lastpassed >>= 1
 
         if move.is_passing():
-            self.thispassed = True
+            self.lastpassed |= 0b10
         elif move.richtung == 0:
-            npawn = pawn >> (1)
-            self.black = (self.black & ~pawn) | npawn
+            self.move_up_b(move.figur)
         elif move.richtung == 1:
-            npawn = pawn << (8 - 1)
-            self.black = (self.black & ~pawn) | npawn
-            self.white = (self.white & ~npawn)
+            self.move_right_b(move.figur)
         else:
-            npawn = pawn >> (8 + 1)
-            self.black = (self.black & ~pawn) | npawn
-            self.white = (self.white & ~npawn)
+            self.move_left_b(move.figur)
 
         
     def printMe(self):
@@ -133,11 +115,11 @@ class GameState:
 
     def game_is_finished(self): #+1=win white 0=draw -1=win black None=not finished
         # one figure has traversed the board to the opponent’s side
-        if (self.white & self.whitemask):
+        if (self.white & self.whitemask) != 0:
             return +1
-        elif (self.black & self.blackmask):
+        elif (self.black & self.blackmask) != 0:
             return -1
-        elif self.lastpassed and self.thispassed:
+        elif self.lastpassed == 3:
             return 0
         else:
             return None
