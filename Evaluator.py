@@ -1,18 +1,18 @@
-from random import random
+from Bewertung import bewerte_unentschieden, bewerte_figurzahl
 
 class Evaluator:
-    evaluator_functions = {}
-    def __init__(self, evaluator = "default"):
-        self.max_depth = 100
-        self.evaluator = evaluator
-        Evaluator.evaluator_functions = {"default": self.default_evaluate,
-                            "bauerndifferenz": self.bauerndifferenz}
+    estimate_functions = {
+            "unentschieden": bewerte_unentschieden,
+            "figurzahl": bewerte_figurzahl}
+    
+    def __init__(self, estimator = "unentschieden", max_depth = 100):
+        self.max_depth = max_depth
+        self.estimator = estimator
+        self.estimate = Evaluator.estimate_functions[self.estimator]
+        
         
 
-    def evaluate(self, knoten, alpha, beta, is_white):
-        return self.evaluator_functions[self.evaluator](knoten,alpha,beta, 0, is_white)
-
-    def default_evaluate(self, knoten, alpha, beta, depth, is_white):        
+    def evaluate(self, knoten, alpha, beta, depth, is_white):        
         immediate = knoten.game_is_finished()
         
         if immediate != None:
@@ -24,8 +24,8 @@ class Evaluator:
                 return 0, None
             
         if depth >= self.max_depth:
-            return self.bauerndifferenz(knoten, alpha, beta)
-        
+            return self.estimate(knoten, is_white), None
+            
         # Annahme: beta > alpha
         # liefert Bewertung + besten Zug
         # bricht ab wenn bewertung <= alpha oder >=beta
@@ -34,7 +34,7 @@ class Evaluator:
             legalMoves = knoten.list_all_legal_moves() # liste aller kanten zu kindern
         else:
             legalMoves = knoten.list_all_legal_moves_b()
-            
+                        
         m = -alpha # schlechteste Stellung für den Gegner hat Wert m
         bestmove = None
         
@@ -46,7 +46,7 @@ class Evaluator:
             else:
                 child.applyMove_b(move)
                 
-            e, _ = self.default_evaluate(child, -beta, m, depth+1, not is_white)  # <= m, >=-beta
+            e, _ = self.evaluate(child, -beta, m, depth+1, not is_white)  # <= m, >=-beta
             if e < m: # neue schlechteste Stellung für Gegner
                 bestmove = move
                 m = e

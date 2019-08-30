@@ -7,12 +7,13 @@ from Move import Move
 
 
 class Client:
-    def __init__(self, width, height, evaluator = "default", name="JJF"):
+    def __init__(self, width, height, evaluator = "default", name="JJF", max_depth = 100):
         self.color = ""
         self.width = width
         self.height = height
         self.innerstate = GameState(width, height)
-        self.evaluator = Evaluator(evaluator)
+        self.max_depth = max_depth
+        self.evaluator = Evaluator(evaluator, max_depth)
 
         self.name = name
 
@@ -20,7 +21,7 @@ class Client:
 
 
     def find_best_move(self, is_white):
-        rating, move = self.evaluator.evaluate(self.innerstate, -100, 100, is_white)
+        rating, move = self.evaluator.evaluate(self.innerstate, -100, 100, 0, is_white)
         return move
 
     def connect(self):
@@ -72,25 +73,29 @@ class Client:
         return "black" if turn == "white" else "white"
 
 def main():
-    e = Evaluator()
     parser = argparse.ArgumentParser()
     parser.add_argument("x", type = int)
     parser.add_argument("y", type = int)
-    parser.add_argument("evaluator", choices = e.evaluator_functions.keys())
+    parser.add_argument("evaluator", choices = Evaluator.estimate_functions.keys())
     parser.add_argument("-n", "--name")
+    parser.add_argument("-d", "--depth", type = int)
     args = parser.parse_args()
-    del(e)
     if not args.name:
         name = "JJF_{}x{}_{}".format(args.x, args.y, args.evaluator)
     else:
         name = args.name
+        
+    if not args.depth:
+        max_depth = 100
+    else:
+        max_depth = args.depth
 
     # main function
-    client = Client(args.x, args.y, evaluator = args.evaluator, name=name)
+    client = Client(args.x, args.y, evaluator = args.evaluator, name=name, max_depth = max_depth)
     client.run()
 
 def test():
-    c = Client(4,4)
+    c = Client(5,5)
     is_white = True
     while c.innerstate.game_is_finished() is None:
         move = c.find_best_move(is_white)
@@ -104,6 +109,7 @@ def test():
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        test()
+        for i in range(1):
+            test()
     else:
         main()

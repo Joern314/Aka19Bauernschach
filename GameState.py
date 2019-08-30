@@ -6,6 +6,11 @@ from Move import Move
 
 class GameState:
     # MATH FUNCTIONS
+    @staticmethod
+    def extract_pawn(bitmask):
+        return bitmask & (-bitmask), bitmask & (bitmask-1)
+    
+    # MOVE FUNCTIONS
     def move_up(self, pawn):
         npawn = pawn << (1)
         self.white = (self.white & ~pawn) | npawn
@@ -51,8 +56,7 @@ class GameState:
 
     def extract_all_moves(self, retVal, turnmask, direction):
         while turnmask:
-            pawn = turnmask & (-turnmask)
-            turnmask = turnmask & (turnmask-(1))
+            pawn, turnmask = GameState.extract_pawn(turnmask)
             retVal.append(Move(pawn, direction))
 
     def list_all_legal_moves(self):
@@ -73,6 +77,14 @@ class GameState:
             retVal.append(Move(0,0)) #pass
         return retVal
 
+    def list_all_pawns(self, bitmask):
+        retVal = []
+        turnmask = bitmask
+        while turnmask:
+            pawn, turnmask = GameState.extract_pawn(turnmask)
+            retVal.append(pawn)
+        return retVal
+    
 #    def rotateBoard(self):
  #       self.white, self.black = reverse_bits(self.black), reverse_bits(self.white)
   #      self.lossmask, self.winmask = reverse_bits(self.winmask), reverse_bits(self.lossmask)
@@ -85,7 +97,7 @@ class GameState:
         g.lastpassed = self.lastpassed
         return g
 
-    def applyMove(self, move : Move):
+    def applyMove(self, move):
         self.lastpassed >>= 1
         
         if move.is_passing():
@@ -97,7 +109,7 @@ class GameState:
         else:
             self.move_left(move.figur)
 
-    def applyMove_b(self, move : Move):
+    def applyMove_b(self, move):
         self.lastpassed >>= 1
 
         if move.is_passing():

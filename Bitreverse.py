@@ -8,5 +8,5 @@ from numpy import uint64
 #        rev += x & uint64(1)
 #        x >>= uint64(1)
 #    return rev
-    
+        
     
