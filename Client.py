@@ -80,15 +80,17 @@ def main():
     parser.add_argument("-n", "--name")
     parser.add_argument("-d", "--depth", type = int)
     args = parser.parse_args()
-    if not args.name:
-        name = "JJF_{}x{}_{}".format(args.x, args.y, args.evaluator)
-    else:
-        name = args.name
-        
+
     if not args.depth:
         max_depth = 100
     else:
         max_depth = args.depth
+
+    if not args.name:
+        name = "JJF_{}x{}_{}_{}".format(args.x, args.y, args.evaluator, max_depth)
+    else:
+        name = args.name
+        
 
     # main function
     client = Client(args.x, args.y, evaluator = args.evaluator, name=name, max_depth = max_depth)
