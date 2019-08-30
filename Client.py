@@ -1,9 +1,9 @@
-import math
 import sys
 import argparse
 from Evaluator import Evaluator
 from GameState import GameState
 from Move import Move
+from Bewertung import estimate_functions
 
 
 class Client:
@@ -76,7 +76,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("x", type = int)
     parser.add_argument("y", type = int)
-    parser.add_argument("evaluator", choices = Evaluator.estimate_functions.keys())
+    parser.add_argument("evaluator", choices = estimate_functions.keys())
     parser.add_argument("-n", "--name")
     parser.add_argument("-d", "--depth", type = int)
     args = parser.parse_args()

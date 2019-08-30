@@ -1,14 +1,10 @@
-from Bewertung import bewerte_unentschieden, bewerte_figurzahl
+from Bewertung import bewerte_unentschieden, bewerte_figurzahl, estimate_functions
 
-class Evaluator:
-    estimate_functions = {
-            "unentschieden": bewerte_unentschieden,
-            "figurzahl": bewerte_figurzahl}
-    
+class Evaluator:    
     def __init__(self, estimator = "unentschieden", max_depth = 100):
         self.max_depth = max_depth
         self.estimator = estimator
-        self.estimate = Evaluator.estimate_functions[self.estimator]
+        self.estimate = estimate_functions[self.estimator]
         
         
 
