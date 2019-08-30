@@ -96,8 +96,8 @@ def main():
     client = Client(args.x, args.y, evaluator = args.evaluator, name=name, max_depth = max_depth)
     client.run()
 
-def test():
-    c = Client(5,5)
+def test(size, evaluator, depth):
+    c = Client(size, size, evaluator, "test", depth)
     is_white = True
     while c.innerstate.game_is_finished() is None:
         move = c.find_best_move(is_white)
@@ -110,8 +110,11 @@ def test():
     print("result for white = " + str(c.innerstate.game_is_finished()))
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        for i in range(1):
-            test()
+    if len(sys.argv) >= 5 and sys.argv[1] == "test":
+        size = int(sys.argv[2])
+        evaluator = sys.argv[3]
+        depth = int(sys.argv[4])
+        for i in range(10):
+            test(size, evaluator, depth)
     else:
         main()

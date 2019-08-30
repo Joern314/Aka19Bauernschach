@@ -9,7 +9,6 @@ def bewerte_figurzahl(board, is_white):
     
     return (len(pawns_white) - len(pawns_black))/float(board.size_x) * (+1 if is_white else -1)
 
-
 estimate_functions = {
     "unentschieden": bewerte_unentschieden,
     "figurzahl": bewerte_figurzahl
