@@ -1,4 +1,5 @@
 import math
+import Bits
 #from Bitreverse import reverse_bits
 #from numpy import 
 
@@ -17,10 +18,10 @@ class Move:
         return self.figur
     
     def get_x(self):
-        return int(math.log2(self.figur) / 8)
+        return Bits.get_x(self.figur)
 
     def get_y(self):
-        return int(math.log2(self.figur))%8
+        return Bits.get_y(self.figur)
         
     def copy(self):
         return Move(self.figur, self.richtung)

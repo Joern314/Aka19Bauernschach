@@ -1,3 +1,4 @@
+import math
 from Move import Move
 #from numpy import ,uint8
 #from Bitreverse import reverse_bits
@@ -9,7 +10,7 @@ class GameState:
     @staticmethod
     def extract_pawn(bitmask):
         return bitmask & (-bitmask), bitmask & (bitmask-1)
-    
+        
     # MOVE FUNCTIONS
     def move_up(self, pawn):
         npawn = pawn << (1)
