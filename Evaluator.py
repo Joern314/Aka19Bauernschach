@@ -1,4 +1,4 @@
-from Bewertung import bewerte_unentschieden, bewerte_figurzahl, estimate_functions
+from Bewertung import *
 
 class Evaluator:    
     def __init__(self, estimator = "unentschieden", max_depth = 100):
