@@ -32,7 +32,7 @@ class Evaluator:
             legalMoves = knoten.list_all_legal_moves_b()
                         
         m = -alpha # schlechteste Stellung für den Gegner hat Wert m
-        bestmove = None
+        bestmove = legalMoves[0]
         
         for move in legalMoves:
             child = knoten.clone()

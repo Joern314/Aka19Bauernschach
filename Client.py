@@ -21,7 +21,7 @@ class Client:
 
 
     def find_best_move(self, is_white):
-        rating, move = self.evaluator.evaluate(self.innerstate, -100, 100, 0, is_white)
+        rating, move = self.evaluator.evaluate(self.innerstate, -2, 1, 0, is_white)
         return move
 
     def connect(self):
@@ -114,7 +114,7 @@ if __name__ == "__main__":
         size = int(sys.argv[2])
         evaluator = sys.argv[3]
         depth = int(sys.argv[4])
-        for i in range(10):
+        for i in range(1):
             test(size, evaluator, depth)
     else:
         main()
