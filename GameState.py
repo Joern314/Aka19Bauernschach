@@ -77,6 +77,19 @@ class GameState:
             retVal.append(Move(0,0)) #pass
         return retVal
 
+    def list_all_legal_moves_wb(self, is_white):
+        if is_white:
+            return self.list_all_legal_moves()
+        else:
+            return self.list_all_legal_moves_b()
+        
+    def move_wb(self, is_white, move):
+        if is_white:
+            self.applyMove(move)
+        else:
+            self.applyMove_b(move)
+        
+        
     def list_all_pawns(self, bitmask):
         retVal = []
         turnmask = bitmask

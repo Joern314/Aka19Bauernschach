@@ -4,6 +4,7 @@ from Evaluator import Evaluator
 from GameState import GameState
 from Move import Move
 from Bewertung import estimate_functions
+from Proofnumber import ProofnumberSearch
 
 
 class Client:
@@ -21,8 +22,10 @@ class Client:
 
 
     def find_best_move(self, is_white):
-        rating, move = self.evaluator.evaluate(self.innerstate, -2, 1, 0, is_white)
-        return move
+        pne = ProofnumberSearch()
+        return pne.find_best_move(self.innerstate, is_white)
+#        rating, move = self.evaluator.evaluate(self.innerstate, -2, 1, 0, is_white)
+#        return move
 
     def connect(self):
         print(self.name)
