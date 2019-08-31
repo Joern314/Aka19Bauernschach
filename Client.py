@@ -22,8 +22,8 @@ class Client:
 
 
     def find_best_move(self, is_white):
-        pne = ProofnumberSearch()
-        return pne.find_best_move(self.innerstate, is_white)
+        rating, move = ProofnumberSearch.find_best_move_with_draw(self.innerstate, is_white)
+        return move
 #        rating, move = self.evaluator.evaluate(self.innerstate, -2, 1, 0, is_white)
 #        return move
 
@@ -99,8 +99,8 @@ def main():
     client = Client(args.x, args.y, evaluator = args.evaluator, name=name, max_depth = max_depth)
     client.run()
 
-def test(size, evaluator, depth):
-    c = Client(size, size, evaluator, "test", depth)
+def test(sizex, sizey, evaluator, depth):
+    c = Client(sizex, sizey, evaluator, "test", depth)
     is_white = True
     while c.innerstate.game_is_finished() is None:
         move = c.find_best_move(is_white)
@@ -113,11 +113,13 @@ def test(size, evaluator, depth):
     print("result for white = " + str(c.innerstate.game_is_finished()))
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 5 and sys.argv[1] == "test":
-        size = int(sys.argv[2])
-        evaluator = sys.argv[3]
-        depth = int(sys.argv[4])
+    if len(sys.argv) >= 4 and sys.argv[1] == "test":
+        sizex = int(sys.argv[2])
+        sizey = int(sys.argv[3])
+#        evaluator = sys.argv[4]
+#        depth = int(sys.argv[4])
         for i in range(1):
-            test(size, evaluator, depth)
+            test(sizex, sizey, "figurzahl", 0)
+#            test(size, evaluator, depth)
     else:
         main()
