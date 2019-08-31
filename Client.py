@@ -22,10 +22,10 @@ class Client:
 
 
     def find_best_move(self, is_white):
-        rating, move = ProofnumberSearch.find_best_move_with_draw(self.innerstate, is_white)
-        return move
-#        rating, move = self.evaluator.evaluate(self.innerstate, -2, 1, 0, is_white)
-#        return move
+ #       rating, move = ProofnumberSearch.find_best_move_with_draw(self.innerstate, is_white)
+  #      return move
+         rating, move = self.evaluator.evaluate(self.innerstate, -2, 1, 0, is_white)
+         return move
 
     def connect(self):
         print(self.name)
@@ -116,10 +116,10 @@ if __name__ == "__main__":
     if len(sys.argv) >= 4 and sys.argv[1] == "test":
         sizex = int(sys.argv[2])
         sizey = int(sys.argv[3])
-#        evaluator = sys.argv[4]
-#        depth = int(sys.argv[4])
+        evaluator = sys.argv[4]
+        depth = int(sys.argv[5])
         for i in range(1):
-            test(sizex, sizey, "figurzahl", 0)
-#            test(size, evaluator, depth)
+#            test(sizex, sizey, "figurzahl", 0)
+            test(sizex, sizey, evaluator, depth)
     else:
         main()
