@@ -83,7 +83,7 @@ class GameState:
         else:
             return self.list_all_legal_moves_b()
         
-    def move_wb(self, is_white, move):
+    def applyMove_wb(self, is_white, move):
         if is_white:
             self.applyMove(move)
         else:
